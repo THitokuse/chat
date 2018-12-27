@@ -1,9 +1,18 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>チャット</title>
-</head>
-<body>
-  チャットをしましょう！
-</body>
+  <head>
+    <title>チャット</title>
+    <style>
+      input { display: block; }
+      ul { list-style: none; }
+    </style>
+  </head>
+  <body>
+    <ul id="messages"></ul>
+    Webソケットを使ったチャットアプリケーション
+    <form id="chatbox">
+      <textarea></textarea>
+      <input type="submit" name="" value="送信" />
+    </form>
+  </body>
 </html>
