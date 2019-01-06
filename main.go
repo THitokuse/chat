@@ -7,6 +7,8 @@ import (
   "path/filepath"
   "sync"
   "flag"
+  "os"
+  "trace"
 )
 
 //templは1つのテンプレートを表します
@@ -29,6 +31,7 @@ func main() {
   flag.Parse()
 
   r := newRoom()
+  r.tracer = trace.New(os.Stdout)
   //ルート
   http.Handle("/", &templateHandler{filename: "chat.html"})
   http.Handle("/room", r)
