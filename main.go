@@ -34,6 +34,7 @@ func main() {
   // r.tracer = trace.New(os.Stdout)
   //ルート
   http.Handle("/chat", MustAuth(&templateHandler{filename: "chat.html"}))
+  http.Handle("/login", &templateHandler{filename: "login.html"})
   http.Handle("/room", r)
   //チャットルームを開始します。
   go r.run()
