@@ -7,8 +7,8 @@ import (
   "path/filepath"
   "sync"
   "flag"
-  "os"
-  "trace"
+  // "os"
+  // "trace"
 )
 
 //templは1つのテンプレートを表します
