@@ -1,6 +1,9 @@
 package main
 
 import (
+  "github.com/stretchr/gomniauth/provider/facebook"
+  "github.com/stretchr/gomniauth/provider/github"
+  "github.com/stretchr/gomniauth/provider/google"
   "log"
   "net/http"
   "text/template"
@@ -29,6 +32,14 @@ func main() {
   var addr = flag.String("addr", ":8080", "アプリケーションのアドレス")
   //フラグを解釈します
   flag.Parse()
+
+  //Gomniauthのセットアップ
+  gomniauth.SetSecurityKey("セキュリティーキー")
+  gomniauth.WithProviders(
+    facebook.New("クライアントID", "秘密の値", "http://localhost:8080/auth/callback/facebook"),
+    github.New("クライアントID", "秘密の値", "http://localhost:8080/auth/callback/github"),
+    google.New("クライアントID", "秘密の値", "http://localhost:8080/auth/callback/google"),
+  )
 
   r := newRoom()
   // r.tracer = trace.New(os.Stdout)
