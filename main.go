@@ -1,9 +1,10 @@
 package main
 
 import (
-  "github.com/stretchr/gomniauth/provider/facebook"
-  "github.com/stretchr/gomniauth/provider/github"
-  "github.com/stretchr/gomniauth/provider/google"
+  "github.com/stretchr/gomniauth"
+  "github.com/stretchr/gomniauth/providers/facebook"
+  "github.com/stretchr/gomniauth/providers/github"
+  "github.com/stretchr/gomniauth/providers/google"
   "log"
   "net/http"
   "text/template"

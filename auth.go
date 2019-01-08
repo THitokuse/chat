@@ -1,5 +1,6 @@
 package main
 import (
+  "github.com/stretchr/gomniauth"
   "net/http"
   "strings"
   "log"
