@@ -3,8 +3,10 @@ import (
   "github.com/stretchr/gomniauth"
   "github.com/stretchr/objx"
   "net/http"
+  "crypto/md5"
   "strings"
   "log"
+  "io"
   "fmt"
 )
 type authHandler struct {
@@ -12,7 +14,7 @@ type authHandler struct {
 }
 
 func (h *authHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-  if _, err := r.Cookie("auth"); err == http.ErrNoCookie {
+  if cookie, err := r.Cookie("auth"); err == http.ErrNoCookie || cookie.Value == "" {
     //未承認
     w.Header().Set("Location", "/login")
     w.WriteHeader(http.StatusTemporaryRedirect)
@@ -51,8 +53,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
     if err != nil {
       log.Fatalln("認証プロバイダーの取得に失敗しました", provider, "-", err)
     }
-    creds, err :=
-      provider.CompleteAuth(objx.MustFromURLQuery(r.URL.RawQuery))
+    creds, err := provider.CompleteAuth(objx.MustFromURLQuery(r.URL.RawQuery))
     if err != nil {
       log.Fatalln("認証を完了できませんでした", provider, "-", err)
     }
@@ -60,8 +61,16 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
     if err != nil {
       log.Fatalln("ユーザーの取得に失敗しました", provider, "-", err)
     }
+
+    m := md5.New()
+    io.WriteString(m, strings.ToLower(user.Name()))
+    userID := fmt.Sprintf("%x", m.Sum(nil))
+    //データを保存します
     authCookieValue := objx.New(map[string]interface{}{
+      "userid": userID,
       "name": user.Name(),
+      "avatar_url": user.AvatarURL(),
+      "email": user.Email(),
     }).MustBase64()
     http.SetCookie(w, &http.Cookie{
       Name: "auth",
