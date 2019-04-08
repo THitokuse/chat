@@ -1,44 +1,45 @@
 package main
 
 import (
-  "github.com/gorilla/websocket"
-  "time"
+	"time"
+
+	"github.com/gorilla/websocket"
 )
 
 //clientはチャットを行なっている一人のユーザーを表します。
 type client struct {
-  //socketはこのクライアントのためのWebSocketです。
-  socket *websocket.Conn
+	//socketはこのクライアントのためのWebSocketです。
+	socket *websocket.Conn
 
-  //sendはメッセージが送られるチャネルです。
-  send chan *message
+	//sendはメッセージが送られるチャネルです。
+	send chan *message
 
-  //roomはこのクライアントが参加しているチャットルームです。
-  room *room
+	//roomはこのクライアントが参加しているチャットルームです。
+	room *room
 
-  //userDataはユーザーに関する情報を保持します。
-  userData map[string]interface{}
+	//userDataはユーザーに関する情報を保持します。
+	userData map[string]interface{}
 }
 
 func (c *client) read() {
-  for {
-    var msg *message
-    if err := c.socket.ReadJSON(&msg); err == nil {
-      msg.When = time.Now()
-      msg.Name = c.userData["name"].(string)
-      msg.AvatarURL, _ = c.room.avatar.GetAvatarURL(c)
-      c.room.forward <- msg
-    } else {
-      break
-    }
-  }
-  c.socket.Close()
+	for {
+		var msg *message
+		if err := c.socket.ReadJSON(&msg); err == nil {
+			msg.When = time.Now()
+			msg.Name = c.userData["name"].(string)
+			msg.AvatarURL, _ = c.room.avatar.GetAvatarURL(c)
+			c.room.forward <- msg
+		} else {
+			break
+		}
+	}
+	c.socket.Close()
 }
 func (c *client) write() {
-  for msg := range c.send {
-    if err := c.socket.WriteJSON(msg); err != nil {
-      break
-    }
-  }
-  c.socket.Close()
+	for msg := range c.send {
+		if err := c.socket.WriteJSON(msg); err != nil {
+			break
+		}
+	}
+	c.socket.Close()
 }
